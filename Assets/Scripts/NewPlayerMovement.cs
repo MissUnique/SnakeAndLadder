@@ -6,18 +6,22 @@ public class NewPlayerMovement : MonoBehaviour
 {
     public static bool isTossed;
 
-    Vector3 playerPosition;
+    Vector3 currentPlayerPosition;
+    Vector3 newPlayerPosition;
+    Vector3 tempPlayerPosition;
 
-    public float speed = 10f;
-    Rigidbody rb;
-    float newPosition;
+    float forwardSteps;
+    float extraSteps;
+
+    //public float speed = 10f;
+    //Rigidbody rb;
 
     // Start is called before the first frame update
     void Start()
     {
         isTossed = false;
 
-        rb = GetComponent<Rigidbody>();
+        //rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -26,7 +30,8 @@ public class NewPlayerMovement : MonoBehaviour
         //Debug.Log("isTossed: " + isTossed);
         //Debug.Log("NewDiceTossing.diceVelocity: " + NewDiceTossing.diceVelocity);
 
-        playerPosition = transform.position;
+        currentPlayerPosition = transform.position;
+        newPlayerPosition = currentPlayerPosition;
 
         if (isTossed)
         {
@@ -34,43 +39,102 @@ public class NewPlayerMovement : MonoBehaviour
             isTossed = false;
 
             // Check if player is in the 10 floors playground
-            if (playerPosition.y < 10)
+            if (currentPlayerPosition.y < 10)
             {
                 //Debug.Log("Player is in the 10 floors playground");
 
                 // Player is in odd levels
-                if ((playerPosition.y - 0.75) % 2 == 0)
+                if ((currentPlayerPosition.y - 0.75) % 2 == 0)
                 {
                     //Debug.Log("Player is in odd levels");
 
-                    playerPosition.x += NewDiceNumberText.diceNumber;
+                    newPlayerPosition.x += NewDiceNumberText.diceNumber;
 
                     // Right movement
-                    if (playerPosition.x > 0 && playerPosition.x < 11)
+                    if (newPlayerPosition.x > 0 && newPlayerPosition.x < 11)
                     {
-                        StartCoroutine(moveObject(playerPosition));
+                        //Debug.Log("currentPlayerPosition: " + currentPlayerPosition);
+                        //Debug.Log("newPlayerPosition: " + newPlayerPosition);
+                        StartCoroutine(moveObject(currentPlayerPosition, newPlayerPosition, 0f));
+                    }
+
+                    // Next level movement
+                    else if (newPlayerPosition.x > 10)
+                    {
+                        forwardSteps = 10 - currentPlayerPosition.x;
+                        //Debug.Log("forwardSteps: " + forwardSteps);
+                        extraSteps = newPlayerPosition.x - 10;
+                        //Debug.Log("extraSteps:" + extraSteps);
+
+                        tempPlayerPosition = currentPlayerPosition;
+                        tempPlayerPosition.x += forwardSteps;
+                        StartCoroutine(moveObject(currentPlayerPosition, tempPlayerPosition, extraSteps));
+
                     }
                 }
+
+                // Player is in even levels
+                else if ((currentPlayerPosition.y - 0.75) % 2 != 0)
+                {
+                    newPlayerPosition.x -= NewDiceNumberText.diceNumber;
+
+                    // Left movement
+                    if (newPlayerPosition.x > 0 && newPlayerPosition.x < 11)
+                    {
+                        StartCoroutine(moveObject(currentPlayerPosition, newPlayerPosition, 0f));
+                    }
+
+
+                }
+
             }
-
-            newPosition = transform.position.x + NewDiceNumberText.diceNumber;
-            //Debug.Log("currentPosition: " + transform.position.x);
-            //Debug.Log("newPosition: " + newPosition);
-
             
-            /*      Try 2
-            if (transform.position.x < newPosition)
-                rb.velocity = new Vector3(NewDiceNumberText.diceNumber, rb.velocity.y, 0) * speed;
-            */
-            /*      Try 1
-            gameObject.transform.position = new Vector3(transform.position.x + (NewDiceNumberText.diceNumber * speed * Time.deltaTime),
-               transform.position.y, transform.position.z);
-            */
+        }
+    }
+    
+    // Function to move player horizontally
+    public IEnumerator moveObject(Vector3 currentPosition, Vector3 newPosition, float extraStepsToMove)
+    {
+        float totalMovementTime = 1f; 
+        float currentMovementTime = 0f;
+        while (transform.localPosition != newPosition)
+        {
+            currentMovementTime += Time.deltaTime;
+            transform.localPosition = Vector3.Lerp(currentPosition, newPosition, currentMovementTime / totalMovementTime);
+            yield return null;
+        }
+
+        // Move up if required
+        if (extraStepsToMove > 0)
+        {
+            extraStepsToMove--;
+            StartCoroutine(moveObjectUP(newPosition, extraStepsToMove));
         }
     }
 
-    public IEnumerator moveObject(Vector3 playerNewPos)
+    // Function to move player vertically
+    public IEnumerator moveObjectUP(Vector3 currentPosition, float extraStepsUP)
     {
-        return null;
+        Vector3 newPosition = currentPosition;
+        newPosition.y++;
+        newPosition.z++;
+        Debug.Log("Start moving up..");
+        float totalMovementTime = 1f;
+        float currentMovementTime = 0f;
+        while (transform.localPosition != newPosition)
+        {
+            currentMovementTime += Time.deltaTime;
+            transform.localPosition = Vector3.Slerp(currentPosition, newPosition, currentMovementTime / totalMovementTime);
+            yield return null;
+        }
+
+        // Move horizontally if required
+        if (extraStepsUP > 0)
+        {
+            currentPosition = newPosition;
+            newPosition.x -= extraStepsUP;
+            StartCoroutine(moveObject(currentPosition, newPosition, 0f));
+        }
     }
 }
+
