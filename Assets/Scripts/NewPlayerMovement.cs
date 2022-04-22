@@ -12,10 +12,17 @@ public class NewPlayerMovement : MonoBehaviour
     float forwardSteps;
     float extraSteps;
 
+    public Transform cam;
+    Vector3 camOffset;
+    Vector3 camOriginalPosition;
+
     // Start is called before the first frame update
     void Start()
     {
         isTossed = false;
+
+        camOffset = new Vector3(0, 3, -3);
+        camOriginalPosition = cam.position;
     }
 
     // Update is called once per frame
@@ -27,6 +34,8 @@ public class NewPlayerMovement : MonoBehaviour
         if (isTossed)
         {
             isTossed = false;
+
+            cam.position = currentPlayerPosition + camOffset;
 
             // Check if player is in the 10 floors playground
             if (currentPlayerPosition.y < 10)
@@ -78,15 +87,21 @@ public class NewPlayerMovement : MonoBehaviour
                 }
             }
         }
+
+        else
+        {
+            cam.position = camOriginalPosition;
+        }
     }
     
     // Function to move player horizontally
     public IEnumerator moveObject(Vector3 currentPosition, Vector3 newPosition, float extraStepsToMove)
     {
-        float totalMovementTime = 1f; 
+        float totalMovementTime = 2f; 
         float currentMovementTime = 0f;
         while (transform.localPosition != newPosition)
         {
+            cam.position = transform.position + camOffset;
             currentMovementTime += Time.deltaTime;
             transform.localPosition = Vector3.Lerp(currentPosition, newPosition, currentMovementTime / totalMovementTime);
             yield return null;
@@ -106,10 +121,11 @@ public class NewPlayerMovement : MonoBehaviour
         Vector3 newPosition = currentPosition;
         newPosition.y++;
         newPosition.z++;
-        float totalMovementTime = 1f;
+        float totalMovementTime = 2f;
         float currentMovementTime = 0f;
         while (transform.localPosition != newPosition)
         {
+            cam.position = transform.position + camOffset;
             currentMovementTime += Time.deltaTime;
             transform.localPosition = Vector3.Slerp(currentPosition, newPosition, currentMovementTime / totalMovementTime);
             yield return null;
@@ -128,5 +144,6 @@ public class NewPlayerMovement : MonoBehaviour
             StartCoroutine(moveObject(currentPosition, newPosition, 0f));
         }
     }
+
 }
 
