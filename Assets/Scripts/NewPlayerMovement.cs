@@ -44,7 +44,7 @@ public class NewPlayerMovement : MonoBehaviour
                 if ((currentPlayerPosition.y - 0.75) % 2 == 0)
                 {
                     newPlayerPosition.x += NewDiceNumberText.diceNumber;
-
+                    
                     // Right movement
                     if (newPlayerPosition.x > 0 && newPlayerPosition.x < 11)
                     {
