@@ -8,6 +8,7 @@ public class Rising : MonoBehaviour
     public Rigidbody playerRb;
     bool isMoving;
     int counter;
+    bool transfered;
 
     //protected float animationTime;
     public Transform playerTransform;
@@ -18,6 +19,7 @@ public class Rising : MonoBehaviour
     {
         isMoving = true;
         counter = 0;
+        transfered = false;
     }
 
     // Update is called once per frame
@@ -41,17 +43,19 @@ public class Rising : MonoBehaviour
                     risingPosition = new Vector3(10, 3.75f, 3); // Rise to Block (31)
                     break;
             }
+
+            // Rise player position
+            if (!transfered)
+                playerTransform.position = risingPosition;
             
-            playerTransform.position = risingPosition;
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        // Check if player is on rising cube
+        // Check if player is on a rising cube
         if (playerRb.IsSleeping())
         {
-            //Debug.Log("playerRb.IsSleeping(): " + playerRb.IsSleeping());
             counter++;
             if (counter == 1)
                 isMoving = false;
@@ -63,15 +67,18 @@ public class Rising : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        // Reset values after transmission
         counter = 0;
-        //isMoving = true;
+        transfered = true;
     }
 
     IEnumerator waiting()
     {
+        // Wait for 1 second
         yield return new WaitForSeconds(1);
     }
 
+    /*
     public static Vector3 Parabola(Vector3 start, Vector3 end, float height, float t)
     {
         Func<float, float> f = x => -4 * height * x * x + 4 * height * x;
@@ -80,6 +87,7 @@ public class Rising : MonoBehaviour
 
         return new Vector3(mid.x, f(t) + Mathf.Lerp(start.y, end.y, t), mid.z);
     }
+    */
 }
 
 
