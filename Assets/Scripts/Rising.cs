@@ -46,8 +46,17 @@ public class Rising : MonoBehaviour
 
             // Rise player position
             if (!transfered)
+            {
                 playerTransform.position = risingPosition;
-            
+
+                // If player in odd level -> look to right
+                if (playerTransform.rotation.eulerAngles.y != 0 && (playerTransform.position.y - 0.75) % 2 == 0)
+                    playerTransform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+
+                // If player in even level -> look to left
+                if (playerTransform.rotation.eulerAngles.y != 180 && (playerTransform.position.y - 0.75) % 2 != 0)
+                    playerTransform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+            }
         }
     }
 

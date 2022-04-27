@@ -43,6 +43,10 @@ public class NewPlayerMovement : MonoBehaviour
                 // Player is in odd levels
                 if ((currentPlayerPosition.y - 0.75) % 2 == 0)
                 {
+                    // Player looks to the right
+                    if (transform.rotation.eulerAngles.y != 0)
+                        transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+
                     newPlayerPosition.x += NewDiceNumberText.diceNumber;
 
                     // Right movement
@@ -66,6 +70,10 @@ public class NewPlayerMovement : MonoBehaviour
                 // Player is in even levels
                 else if ((currentPlayerPosition.y - 0.75) % 2 != 0)
                 {
+                    // Player looks to the left
+                    if (transform.rotation.eulerAngles.y != 180)
+                        transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+
                     newPlayerPosition.x -= NewDiceNumberText.diceNumber;
 
                     // Left movement
@@ -118,6 +126,9 @@ public class NewPlayerMovement : MonoBehaviour
     // Function to move player vertically
     public IEnumerator moveObjectUP(Vector3 currentPosition, float extraStepsUP)
     {
+        // Player looks to the back
+        if (transform.rotation.eulerAngles.y != 270)
+            transform.rotation = Quaternion.Euler(0.0f, 270.0f, 0.0f);
         Vector3 newPosition = currentPosition;
         newPosition.y++;
         newPosition.z++;
@@ -135,12 +146,20 @@ public class NewPlayerMovement : MonoBehaviour
         if (extraStepsUP > 0)
         {
             currentPosition = newPosition;
-            // If player on even level -> moves left
+            // If player on even level -> move and look left
             if ((currentPosition.y - 0.75) % 2 != 0)
+            {
                 newPosition.x -= extraStepsUP;
-            // If player on odd level -> moves right
+                if (transform.rotation.eulerAngles.y != 180)
+                    transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+            }
+            // If player on odd level -> move and look right
             else if ((currentPosition.y - 0.75) % 2 == 0)
+            {
                 newPosition.x += extraStepsUP;
+                if (transform.rotation.eulerAngles.y != 0)
+                    transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+            }
             StartCoroutine(moveObject(currentPosition, newPosition, 0f));
         }
     }
