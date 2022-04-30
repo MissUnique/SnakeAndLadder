@@ -107,7 +107,7 @@ public class NewPlayerMovement : MonoBehaviour
     {
         float totalMovementTime = 2f; 
         float currentMovementTime = 0f;
-        while (transform.localPosition != newPosition)
+        while (transform.localPosition != newPosition) 
         {
             cam.position = transform.position + camOffset;
             currentMovementTime += Time.deltaTime;
