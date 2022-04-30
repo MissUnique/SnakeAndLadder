@@ -16,6 +16,8 @@ public class NewPlayerMovement : MonoBehaviour
     Vector3 camOffset;
     Vector3 camOriginalPosition;
 
+    Rigidbody rb;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +25,8 @@ public class NewPlayerMovement : MonoBehaviour
 
         camOffset = new Vector3(0, 3, -3);
         camOriginalPosition = cam.position;
+
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -37,9 +41,14 @@ public class NewPlayerMovement : MonoBehaviour
 
             cam.position = currentPlayerPosition + camOffset;
 
+            rb.constraints = RigidbodyConstraints.None;
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+
             // Check if player is in the 10 floors playground
             if (currentPlayerPosition.y < 10)
             {
+                currentPlayerPosition.y = Mathf.Round(currentPlayerPosition.y) - 0.25f;
+
                 // Player is in odd levels
                 if ((currentPlayerPosition.y - 0.75) % 2 == 0)
                 {
@@ -99,6 +108,7 @@ public class NewPlayerMovement : MonoBehaviour
         else
         {
             cam.position = camOriginalPosition;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
         }
     }
     
@@ -129,12 +139,40 @@ public class NewPlayerMovement : MonoBehaviour
         // Player looks to the back
         if (transform.rotation.eulerAngles.y != 270)
             transform.rotation = Quaternion.Euler(0.0f, 270.0f, 0.0f);
+
         Vector3 newPosition = currentPosition;
-        newPosition.y++;
-        newPosition.z++;
-        float totalMovementTime = 2f;
+
+        // Move towards ladder
+        newPosition.z += 0.25f;
+        float totalMovementTime = 1f;
         float currentMovementTime = 0f;
-        while (transform.localPosition != newPosition)
+        while (Vector3.Distance(transform.localPosition, newPosition) > 0.1f) // transform.localPosition != newPosition)
+        {
+            cam.position = transform.position + camOffset;
+            currentMovementTime += Time.deltaTime;
+            transform.localPosition = Vector3.Slerp(currentPosition, newPosition, currentMovementTime / totalMovementTime);
+            yield return null;
+        }
+
+        // Climb the ladder
+        currentPosition = newPosition;
+        newPosition.y++;
+        totalMovementTime = 1f;
+        currentMovementTime = 0f;
+        while (Vector3.Distance(transform.localPosition, newPosition) > 0.1f)
+        {
+            cam.position = transform.position + camOffset;
+            currentMovementTime += Time.deltaTime;
+            transform.localPosition = Vector3.Slerp(currentPosition, newPosition, currentMovementTime / totalMovementTime);
+            yield return null;
+        }
+
+        // Move towards middle of block
+        currentPosition = newPosition;
+        newPosition.z += 0.75f;
+        totalMovementTime = 1f;
+        currentMovementTime = 0f;
+        while (Vector3.Distance(transform.localPosition, newPosition) > 0.1f)
         {
             cam.position = transform.position + camOffset;
             currentMovementTime += Time.deltaTime;
