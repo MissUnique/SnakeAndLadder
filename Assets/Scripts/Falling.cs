@@ -38,6 +38,34 @@ public class Falling : MonoBehaviour
                     fallingPosition = new Vector3(3, 0.75f, 0); // Fall to Block (3)
                     downBox = GameObject.Find("Block  (3)");
                     break;
+                case "Block  (56)":
+                    fallingPosition = new Vector3(8, 4.75f, 4); // Fall to Block (48)
+                    downBox = GameObject.Find("Block  (48)");
+                    break;
+                case "Block  (59)":
+                    fallingPosition = new Vector3(1, 0.75f, 0); // Fall to Block (1)
+                    downBox = GameObject.Find("Block  (1)");
+                    break;
+                case "Block  (69)":
+                    fallingPosition = new Vector3(9, 3.75f, 3); // Fall to Block (32)
+                    downBox = GameObject.Find("Block  (32)");
+                    break;
+                case "Block  (83)":
+                    fallingPosition = new Vector3(4, 5.75f, 5); // Fall to Block (57)
+                    downBox = GameObject.Find("Block  (57)");
+                    break;
+                case "Block  (91)":
+                    fallingPosition = new Vector3(8, 7.75f, 7); // Fall to Block (73)
+                    downBox = GameObject.Find("Block  (73)");
+                    break;
+                case "Block  (94)":
+                    fallingPosition = new Vector3(6, 2.75f, 2); // Fall to Block (26)
+                    downBox = GameObject.Find("Block  (26)");
+                    break;
+                case "Block  (99)":
+                    fallingPosition = new Vector3(1, 7.75f, 7); // Fall to Block (80)
+                    downBox = GameObject.Find("Block  (80)");
+                    break;
             }
 
             // Fall player position
@@ -46,13 +74,13 @@ public class Falling : MonoBehaviour
                 // Lowering triggered blocks + player
                 targetPosition = transform.position;
                 targetPosition.y -= 3;
-                StartCoroutine(lowerBox(transform.position, targetPosition, transform));
+                StartCoroutine(fallingMove(transform.position, targetPosition, transform));
                 targetPosition = downBox.transform.position;
                 targetPosition.y -= 3;
-                StartCoroutine(lowerBox(downBox.transform.position, targetPosition, downBox.transform));
+                StartCoroutine(fallingMove(downBox.transform.position, targetPosition, downBox.transform));
                 targetPosition = playerTransform.position;
                 targetPosition.y -= 3;
-                StartCoroutine(lowerBox(playerTransform.position, targetPosition, playerTransform));
+                StartCoroutine(fallingMove(playerTransform.position, targetPosition, playerTransform));
 
                 /*
                 // If player in odd level -> look to right
@@ -93,7 +121,7 @@ public class Falling : MonoBehaviour
         yield return new WaitForSeconds(1);
     }
 
-    public IEnumerator lowerBox(Vector3 currentPosition, Vector3 newPosition, Transform box)
+    public IEnumerator fallingMove(Vector3 currentPosition, Vector3 newPosition, Transform box)
     {
         float totalMovementTime = 2f;
         float currentMovementTime = 0f;
@@ -113,15 +141,15 @@ public class Falling : MonoBehaviour
             playerTransform.position = fallingPosition;
 
             // Lifting triggered blocks + player
-            StartCoroutine(lowerBox(transform.position, originalPosition, transform));
+            StartCoroutine(fallingMove(transform.position, originalPosition, transform));
             targetPosition = downBox.transform.position;
             targetPosition.y += 3;
             targetPosition.y = Mathf.Round(targetPosition.y);
-            StartCoroutine(lowerBox(downBox.transform.position, targetPosition, downBox.transform));
+            StartCoroutine(fallingMove(downBox.transform.position, targetPosition, downBox.transform));
             targetPosition = playerTransform.position;
             targetPosition.y += 3;
             targetPosition.y = Mathf.Round(targetPosition.y) - 0.25f;
-            StartCoroutine(lowerBox(playerTransform.position, targetPosition, playerTransform));
+            StartCoroutine(fallingMove(playerTransform.position, targetPosition, playerTransform));
 
         }
     }

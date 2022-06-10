@@ -42,6 +42,27 @@ public class Rising : MonoBehaviour
                 case "Block  (9)":
                     risingPosition = new Vector3(10, 3.75f, 3); // Rise to Block (31)
                     break;
+                case "Block  (20)":
+                    risingPosition = new Vector3(3, 3.75f, 3); // Rise to Block (38)
+                    break;
+                case "Block  (28)":
+                    risingPosition = new Vector3(4, 8.75f, 8); // Rise to Block (84)
+                    break;
+                case "Block  (36)":
+                    risingPosition = new Vector3(4, 4.75f, 4); // Rise to Block (44)
+                    break;
+                case "Block  (42)":
+                    risingPosition = new Vector3(3, 6.75f, 6); // Rise to Block (63)
+                    break;
+                case "Block  (51)":
+                    risingPosition = new Vector3(7, 6.75f, 6); // Rise to Block (67)
+                    break;
+                case "Block  (62)":
+                    risingPosition = new Vector3(1, 8.75f, 8); // Rise to Block (81)
+                    break;
+                case "Block  (71)":
+                    risingPosition = new Vector3(10, 8.75f, 8); // Rise to Block (90)
+                    break;
             }
 
             // Rise player position
